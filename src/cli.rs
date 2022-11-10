@@ -18,7 +18,7 @@ impl Arguments {
         let mut next_arg = iter.next();
         while next_arg.is_some() {
             let arg = unsafe { next_arg.unwrap_unchecked() };
-            if arg.starts_with("-") {
+            if arg.starts_with('-') {
                 let key = arg.trim_start_matches('-');
                 let value = iter.next().expect("No value for optional key found!");
                 named.insert(key.to_string(), value);

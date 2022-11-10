@@ -9,6 +9,7 @@ impl Vec2 {
     }
 }
 
+#[derive(Debug, Clone, Copy)]
 pub struct Size {
     pub width: u32,
     pub height: u32,
@@ -17,6 +18,10 @@ pub struct Size {
 impl Size {
     pub fn new(width: u32, height: u32) -> Self {
         Self { width, height }
+    }
+
+    pub fn area(&self) -> usize {
+        (self.width * self.height) as usize
     }
 }
 

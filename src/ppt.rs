@@ -1,6 +1,6 @@
 use std::fs;
 use std::io;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use simple_pixels::rgb::RGBA8;
 
@@ -8,9 +8,7 @@ use crate::{Size, Sprite, Vec2};
 
 /// Basic image saving/loading with ppt format.
 
-pub fn save_sprite(path: &str, sprite: &Sprite) -> Result<(), io::Error> {
-    let path = Path::new(path);
-
+pub fn save_sprite(path: &PathBuf, sprite: &Sprite) -> Result<(), io::Error> {
     let (width, height) = (sprite.size.width, sprite.size.height);
     let mut data: String = String::with_capacity(sprite.pixels.len() * 3 * 4); // 3 colors, 4 chars per color string (max)
     for pixel in &sprite.pixels {
@@ -20,8 +18,7 @@ pub fn save_sprite(path: &str, sprite: &Sprite) -> Result<(), io::Error> {
     fs::write(path, [ppt_header, data].concat())
 }
 
-pub fn load_sprite(path: &str) -> Result<Sprite, io::Error> {
-    let path = Path::new(path);
+pub fn load_sprite(path: &PathBuf) -> Result<Sprite, io::Error> {
     let data = fs::read_to_string(path)?;
     if let Some((header, data)) = data.split_once('\n') {
         let data: Vec<&str> = data.split_ascii_whitespace().collect();
