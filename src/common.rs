@@ -32,3 +32,13 @@ pub fn min(of: i32, or: i32) -> i32 {
 pub fn max(of: i32, or: i32) -> i32 {
     of.max(or)
 }
+
+pub fn constrain<T: PartialOrd>(this: T, min: T, max: T) -> T {
+    assert!(min < max);
+    if this < min {
+        return min;
+    } else if this > max {
+        return max;
+    }
+    this
+}

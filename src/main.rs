@@ -20,7 +20,7 @@ mod sprite;
 
 use cli::Arguments;
 use clock::Clock;
-use common::{Size, Vec2};
+use common::{constrain, Size, Vec2};
 use ppt::{load_sprite, save_sprite};
 use sprite::Sprite;
 
@@ -110,7 +110,10 @@ impl State for Game {
         }
 
         let (x, y) = ctx.get_mouse_pos();
-        let (grid_x, grid_y) = (x as u32 / self.scale, y as u32 / self.scale);
+        let (grid_x, grid_y) = (
+            constrain(x as u32, 0, (self.size.width - 1) * self.scale) as u32 / self.scale,
+            constrain(y as u32, 0, (self.size.height - 1) * self.scale) as u32 / self.scale,
+        );
         let index = (grid_y * self.canvas.size.width + grid_x) as usize;
         if ctx.is_mouse_button_down(MouseButton::Right) {
             self.canvas.pixels[index] = RGBA8::default();
@@ -125,8 +128,8 @@ impl State for Game {
     fn draw(&mut self, ctx: &mut Context) {
         ctx.clear();
 
-        for y in 0..self.canvas.size.height - 1 {
-            for x in 0..self.canvas.size.width - 1 {
+        for y in 0..self.canvas.size.height {
+            for x in 0..self.canvas.size.width {
                 let index = (y * self.canvas.size.width + x) as usize;
                 let pixel = self.canvas.pixels[index];
                 ctx.draw_rect(
