@@ -1,5 +1,5 @@
 [package]
-name = "miniquad_p5"
+name = "pixel_editor"
 version = "0.1.0"
 edition = "2021"
 
