@@ -26,8 +26,8 @@ use ppt::{load_sprite, save_sprite};
 use sprite::Sprite;
 use font::Font;
 
-const WIDTH: u32 = 20;
-const HEIGHT: u32 = 20;
+const WIDTH: u32 = 40;
+const HEIGHT: u32 = 30;
 
 fn main() {
     let args = Arguments::new();
@@ -77,6 +77,7 @@ struct Game {
     size: Size,
     path: PathBuf,
     font: Font,
+    selected_color: RGBA8,
 }
 
 impl Game {
@@ -95,6 +96,7 @@ impl Game {
         };
         let clock = Clock::new();
         let font = Font::new();
+        let selected_color = RGBA8::new(100, 100, 100, 255);
         Self {
             clock,
             canvas,
@@ -102,6 +104,7 @@ impl Game {
             size,
             path: file_path,
             font,
+            selected_color,
         }
     }
 }
@@ -124,7 +127,7 @@ impl State for Game {
             self.canvas.pixels[index] = RGBA8::default();
         }
         if ctx.is_mouse_button_down(MouseButton::Left) {
-            self.canvas.pixels[index] = RGBA8::new(r, g, b, 255);
+            self.canvas.pixels[index] = self.selected_color;
         }
 
         self.clock.sleep();
@@ -147,13 +150,19 @@ impl State for Game {
                 );
             }
         }
-        let path_str = format!("{}", self.path.display());
-        self.font.draw(ctx, &path_str, Vec2::new(100.0, 100.0));
+        self.display_selected_color(ctx);
     }
 }
 
 impl Game {
     fn save(&self) {
         save_sprite(&self.path, &self.canvas);
+    }
+
+    fn display_selected_color(&mut self, ctx: &mut Context) {
+    	let RGBA8 {r, g, b, a} = self.selected_color;
+    	let display_str = format!("color: r:{r}, g:{g}, b:{b}");
+    	let pos =  Vec2::new(10.0, (self.size.height * self.scale) as f32 - 20.0);
+        self.font.draw(ctx, &display_str, pos);
     }
 }

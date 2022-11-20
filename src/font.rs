@@ -54,7 +54,7 @@ impl LetterSprite {
                         r.parse::<u8>().unwrap(),
                         g.parse::<u8>().unwrap(),
                         b.parse::<u8>().unwrap(),
-                        255,
+                        0,
                     ));
                 }
             }
@@ -117,6 +117,7 @@ impl Font {
         }
     }
     pub fn draw_char(&self, ctx: &mut Context, ch: char, pos: Vec2) {
+    	if (ch.is_whitespace()) { return; }
         for char_y in 0..CHAR_HEIGHT {
             for char_x in 0..CHAR_WIDTH {
                 let letter = self.letter(ch);
