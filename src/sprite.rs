@@ -1,4 +1,6 @@
-use crate::common::{max, min, Size, Vec2};
+use std::cmp::{max, min};
+
+use crate::common::{Size, Vec2};
 use simple_pixels::{rgb::RGBA8, Context};
 
 pub struct Sprite {
@@ -56,8 +58,8 @@ impl Sprite {
         }
 
         ctx.draw_pixels(
-            max(screen_origin.x as i32, self.origin.x as i32),
-            max(screen_origin.y as i32, self.origin.y as i32),
+            max(screen_origin.x as u32, self.origin.x as u32),
+            max(screen_origin.y as u32, self.origin.y as u32),
             visible_width.try_into().unwrap(),
             visible_height.try_into().unwrap(),
             &visible_pixels,

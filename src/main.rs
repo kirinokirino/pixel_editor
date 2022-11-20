@@ -22,9 +22,9 @@ mod sprite;
 use cli::Arguments;
 use clock::Clock;
 use common::{constrain, Size, Vec2};
+use font::Font;
 use ppt::{load_sprite, save_sprite};
 use sprite::Sprite;
-use font::Font;
 
 const WIDTH: u32 = 40;
 const HEIGHT: u32 = 30;
@@ -70,6 +70,12 @@ fn main() {
     start(config, game);
 }
 
+enum Selection {
+    R,
+    G,
+    B,
+}
+
 struct Game {
     clock: Clock,
     canvas: Sprite,
@@ -78,6 +84,7 @@ struct Game {
     path: PathBuf,
     font: Font,
     selected_color: RGBA8,
+    selection: Selection,
 }
 
 impl Game {
@@ -105,6 +112,7 @@ impl Game {
             path: file_path,
             font,
             selected_color,
+            selection: Selection::R,
         }
     }
 }
@@ -129,13 +137,21 @@ impl State for Game {
         if ctx.is_mouse_button_down(MouseButton::Left) {
             self.canvas.pixels[index] = self.selected_color;
         }
+        if ctx.is_key_pressed(KeyCode::O) {
+            self.selection_decrease();
+        } else if ctx.is_key_pressed(KeyCode::U) {
+            self.selection_increase();
+        } else if ctx.is_key_pressed(KeyCode::Period) {
+            self.color_increase();
+        } else if ctx.is_key_pressed(KeyCode::E) {
+            self.color_decrease();
+        }
 
         self.clock.sleep();
     }
 
     fn draw(&mut self, ctx: &mut Context) {
         ctx.clear();
-
 
         for y in 0..self.canvas.size.height {
             for x in 0..self.canvas.size.width {
@@ -160,9 +176,72 @@ impl Game {
     }
 
     fn display_selected_color(&mut self, ctx: &mut Context) {
-    	let RGBA8 {r, g, b, a} = self.selected_color;
-    	let display_str = format!("color: r:{r}, g:{g}, b:{b}");
-    	let pos =  Vec2::new(10.0, (self.size.height * self.scale) as f32 - 20.0);
+        let RGBA8 { r, g, b, a } = self.selected_color;
+        let (mut sr, mut sg, mut sb) = (' ',' ',' ');
+        match self.selection {
+        	Selection::R => { sr = '>'},
+        	Selection::G => { sg = '>'},
+        	Selection::B => { sb = '>'},
+        }
+        let display_str = format!("color:{sr}r:{r},{sg}g:{g},{sb}b:{b}");
+        let pos = Vec2::new(10.0, (self.size.height * self.scale) as f32 - 20.0);
         self.font.draw(ctx, &display_str, pos);
     }
+
+    fn selection_increase(&mut self) {
+        self.selection = match self.selection {
+            Selection::R => Selection::G,
+            Selection::G => Selection::B,
+            Selection::B => Selection::R,
+        }
+    }
+    
+    fn selection_decrease(&mut self) {
+        self.selection = match self.selection {
+            Selection::R => Selection::B,
+            Selection::G => Selection::R,
+            Selection::B => Selection::G,
+        }
+    }
+    fn color_increase(&mut self) {
+        let RGBA8 {
+            mut r,
+            mut g,
+            mut b,
+            a,
+        } = self.selected_color;
+
+        match self.selection {
+            Selection::R => {
+                r = r.saturating_add(10);
+            }
+            Selection::G => {
+                g = g.saturating_add(10);
+            }
+            Selection::B => {
+                b = b.saturating_add(10);
+            }
+        }
+        self.selected_color = RGBA8::new(r, g, b, a);
+    }
+    fn color_decrease(&mut self) {
+        let RGBA8 {
+            mut r,
+            mut g,
+            mut b,
+            a,
+        } = self.selected_color;
+
+        match self.selection {
+            Selection::R => {
+                r = r.saturating_sub(10);
+            }
+            Selection::G => {
+                g = g.saturating_sub(10);
+            }
+            Selection::B => {
+                b = b.saturating_sub(10);
+            }
+        }
+        self.selected_color = RGBA8::new(r, g, b, a);}
 }

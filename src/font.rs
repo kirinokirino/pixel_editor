@@ -117,13 +117,15 @@ impl Font {
         }
     }
     pub fn draw_char(&self, ctx: &mut Context, ch: char, pos: Vec2) {
-    	if (ch.is_whitespace()) { return; }
+        if (ch.is_whitespace()) {
+            return;
+        }
         for char_y in 0..CHAR_HEIGHT {
             for char_x in 0..CHAR_WIDTH {
                 let letter = self.letter(ch);
                 ctx.draw_pixels(
-                    pos.x as i32,
-                    pos.y as i32,
+                    pos.x as u32,
+                    pos.y as u32,
                     CHAR_WIDTH as u32,
                     CHAR_HEIGHT as u32,
                     &letter.pixels,

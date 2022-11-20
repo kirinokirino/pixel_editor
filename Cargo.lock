@@ -74,9 +74,9 @@ dependencies = [
 
 [[package]]
 name = "simple-pixels"
-version = "0.1.0"
+version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "917c761bab459ca696d0a69bc3487cc6779319a625dbddca287c046379b63a82"
+checksum = "a39a264f245dc2b0ee9ab490ccb363121a160c9c9059d90760c3acbbac4a74d3"
 dependencies = [
  "fnv",
  "miniquad",
