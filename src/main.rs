@@ -15,6 +15,7 @@ use std::path::{Path, PathBuf};
 mod cli;
 mod clock;
 mod common;
+mod font;
 mod ppt;
 mod sprite;
 
@@ -23,9 +24,10 @@ use clock::Clock;
 use common::{constrain, Size, Vec2};
 use ppt::{load_sprite, save_sprite};
 use sprite::Sprite;
+use font::Font;
 
-const WIDTH: u32 = 600;
-const HEIGHT: u32 = 480;
+const WIDTH: u32 = 20;
+const HEIGHT: u32 = 20;
 
 fn main() {
     let args = Arguments::new();
@@ -74,6 +76,7 @@ struct Game {
     scale: u32,
     size: Size,
     path: PathBuf,
+    font: Font,
 }
 
 impl Game {
@@ -91,12 +94,14 @@ impl Game {
             canvas
         };
         let clock = Clock::new();
+        let font = Font::new();
         Self {
             clock,
             canvas,
             scale,
             size,
             path: file_path,
+            font,
         }
     }
 }
@@ -128,6 +133,7 @@ impl State for Game {
     fn draw(&mut self, ctx: &mut Context) {
         ctx.clear();
 
+
         for y in 0..self.canvas.size.height {
             for x in 0..self.canvas.size.width {
                 let index = (y * self.canvas.size.width + x) as usize;
@@ -141,6 +147,8 @@ impl State for Game {
                 );
             }
         }
+        let path_str = format!("{}", self.path.display());
+        self.font.draw(ctx, &path_str, Vec2::new(100.0, 100.0));
     }
 }
 
