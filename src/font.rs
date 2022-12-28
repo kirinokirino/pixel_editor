@@ -1,4 +1,4 @@
-use std::cmp::min;
+
 use std::fs;
 use std::io;
 use std::mem;
@@ -11,7 +11,7 @@ use crate::common::Vec2;
 const CHAR_WIDTH: usize = 9;
 const CHAR_HEIGHT: usize = 14;
 
-struct LetterSprite {
+pub struct LetterSprite {
     pub pixels: [RGBA8; CHAR_WIDTH * CHAR_HEIGHT],
 }
 
@@ -104,11 +104,11 @@ impl Font {
         for (y, line) in text.lines().enumerate() {
             for (x, ch) in line.chars().enumerate() {
                 let pos_y = origin.y + (y * CHAR_HEIGHT) as f32;
-                if (pos_y >= max_pos.y) {
+                if pos_y >= max_pos.y {
                     return;
                 }
                 let pos_x = origin.x + (x * CHAR_WIDTH) as f32;
-                if (pos_x >= max_pos.x) {
+                if pos_x >= max_pos.x {
                     continue;
                 }
                 let pos = Vec2::new(pos_x, pos_y);
@@ -117,11 +117,11 @@ impl Font {
         }
     }
     pub fn draw_char(&self, ctx: &mut Context, ch: char, pos: Vec2) {
-        if (ch.is_whitespace()) {
+        if ch.is_whitespace() {
             return;
         }
-        for char_y in 0..CHAR_HEIGHT {
-            for char_x in 0..CHAR_WIDTH {
+        for _char_y in 0..CHAR_HEIGHT {
+            for _char_x in 0..CHAR_WIDTH {
                 let letter = self.letter(ch);
                 ctx.draw_pixels(
                     pos.x as u32,

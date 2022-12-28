@@ -9,7 +9,7 @@
 )]
 use simple_pixels::{rgb::RGBA8, start, Config, Context, KeyCode, MouseButton, State};
 
-use std::fs::write;
+
 use std::path::{Path, PathBuf};
 
 mod cli;
@@ -91,13 +91,13 @@ impl Game {
     pub fn new(file_path: PathBuf, scale: u32, size: Size) -> Self {
         let mut canvas = load_sprite(&file_path).unwrap_or_else(|_| {
             let pixels: Vec<RGBA8> = vec![RGBA8::default(); size.area()];
-            let canvas = Sprite::new(Vec2::new(0.0, 0.0), size, pixels);
-            canvas
+            
+            Sprite::new(Vec2::new(0.0, 0.0), size, pixels)
         });
         canvas = if canvas.size.area() != size.area() {
             let pixels: Vec<RGBA8> = vec![RGBA8::default(); size.area()];
-            let canvas = Sprite::new(Vec2::new(0.0, 0.0), size, pixels);
-            canvas
+            
+            Sprite::new(Vec2::new(0.0, 0.0), size, pixels)
         } else {
             canvas
         };
@@ -119,7 +119,7 @@ impl Game {
 
 impl State for Game {
     fn update(&mut self, ctx: &mut Context) {
-        let (mut r, mut g, mut b) = (50, 100, 255);
+        let (_r, _g, _b) = (50, 100, 255);
         if ctx.is_key_down(KeyCode::Escape) {
             self.save();
             ctx.quit();
@@ -172,11 +172,13 @@ impl State for Game {
 
 impl Game {
     fn save(&self) {
-        save_sprite(&self.path, &self.canvas);
+        if let Err(error) = save_sprite(&self.path, &self.canvas) {
+			println!("{error}");
+        }
     }
 
     fn display_selected_color(&mut self, ctx: &mut Context) {
-        let RGBA8 { r, g, b, a } = self.selected_color;
+        let RGBA8 { r, g, b, a: _ } = self.selected_color;
         let (mut sr, mut sg, mut sb) = (' ',' ',' ');
         match self.selection {
         	Selection::R => { sr = '>'},
